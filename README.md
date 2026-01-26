@@ -1,136 +1,318 @@
-# Expense Tracker
+# 💰 Expense Tracker
 
-Modern ve kullanıcı dostu bir gelir-gider takip uygulaması. React, TypeScript ve Tailwind CSS ile geliştirilmiştir.
+A modern, user-friendly income and expense tracking application. Track your finances, analyze spending patterns with beautiful charts, and take control of your budget.
 
-![Expense Tracker](https://img.shields.io/badge/React-18-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-blue) ![Vite](https://img.shields.io/badge/Vite-5-purple)
+[![Created by Serkanby](https://img.shields.io/badge/Created%20by-Serkanby-blue?style=flat-square)](https://serkanbayraktar.com/)
+[![GitHub](https://img.shields.io/badge/GitHub-Serkanbyx-181717?style=flat-square&logo=github)](https://github.com/Serkanbyx)
+![React](https://img.shields.io/badge/React-18.3-61DAFB?style=flat-square&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.4-3178C6?style=flat-square&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?style=flat-square&logo=tailwindcss)
+![Vite](https://img.shields.io/badge/Vite-5.2-646CFF?style=flat-square&logo=vite)
 
-## Özellikler
+## Features
 
-- **Gelir/Gider Yönetimi**: İşlem ekleme, düzenleme ve silme (CRUD)
-- **Kategoriler**: Varsayılan ve özel kategoriler ile işlem sınıflandırma
-- **Grafikler**: Recharts ile görsel analiz (Pie, Bar, Area charts)
-- **Filtreler**: Tarih, tip, kategori ve arama ile filtreleme
-- **CSV Export**: Filtrelenmiş verileri CSV olarak dışa aktarma
-- **Responsive Tasarım**: Mobil uyumlu arayüz
-- **Dark Mode**: Koyu tema desteği
-- **Veri Kalıcılığı**: localStorage ile offline veri saklama
+- **Income/Expense Management**: Full CRUD operations - add, edit, and delete transactions with ease
+- **Smart Categories**: Default and custom categories for better transaction classification
+- **Interactive Charts**: Beautiful visualizations with Recharts (Pie, Bar, Area charts)
+- **Advanced Filtering**: Filter by date range, transaction type, category, and search keywords
+- **CSV Export**: Export filtered data to CSV format for external analysis
+- **Responsive Design**: Fully mobile-optimized interface that works on any device
+- **Dark Mode**: Eye-friendly dark theme support for comfortable viewing
+- **Data Persistence**: Offline data storage with localStorage - no server required
+- **Type Safety**: Built with TypeScript for reliable and maintainable code
+- **Form Validation**: Robust validation using Zod schema validation
 
-## Teknolojiler
+## Live Demo
 
-| Teknoloji | Kullanım |
-|-----------|----------|
-| React 18 | UI Framework |
-| TypeScript | Type Safety |
-| Vite | Build Tool |
-| Tailwind CSS | Styling |
-| Zustand | State Management |
-| React Hook Form | Form Handling |
-| Zod | Validation |
-| Recharts | Charts |
-| React Router | Routing |
-| Lucide React | Icons |
-| date-fns | Date Formatting |
+[🎮 View Live Demo](https://expense-tracker-demo.netlify.app)
 
-## Kurulum
+## Technologies
+
+- **React 18**: Modern UI library with hooks and functional components
+- **TypeScript**: Static type checking for enhanced developer experience
+- **Vite**: Lightning-fast build tool and development server
+- **Tailwind CSS**: Utility-first CSS framework for rapid UI development
+- **Zustand**: Lightweight and flexible state management
+- **React Hook Form**: Performant form handling with minimal re-renders
+- **Zod**: TypeScript-first schema validation library
+- **Recharts**: Composable charting library for React
+- **React Router DOM**: Client-side routing for single-page applications
+- **Lucide React**: Beautiful and consistent icon library
+- **date-fns**: Modern JavaScript date utility library
+- **UUID**: Unique identifier generation for transactions
+
+## Installation
+
+### Local Development
+
+1. **Clone the repository**
 
 ```bash
-# Bağımlılıkları yükle
+git clone https://github.com/Serkanbyx/expense-tracker.git
+cd expense-tracker
+```
+
+2. **Install dependencies**
+
+```bash
 npm install
+```
 
-# Geliştirme sunucusunu başlat
+3. **Start the development server**
+
+```bash
 npm run dev
+```
 
-# Production build
+4. **Open your browser**
+
+Navigate to `http://localhost:5173` to view the application.
+
+### Build for Production
+
+```bash
+# Create production build
 npm run build
 
-# Build önizleme
+# Preview production build locally
 npm run preview
 ```
 
-## Proje Yapısı
+### Code Quality
+
+```bash
+# Run ESLint
+npm run lint
+
+# Type check
+npx tsc --noEmit
+```
+
+## Usage
+
+1. **Add a New Transaction**: Click the "New Transaction" button in the header
+2. **Select Transaction Type**: Choose between Income or Expense
+3. **Fill in Details**: Enter amount, select category, pick date, and add description
+4. **Save Transaction**: Click save to add the transaction to your list
+5. **View Analytics**: Navigate to Dashboard to see charts and summaries
+6. **Filter Transactions**: Use the filter bar to narrow down transactions
+7. **Export Data**: Click the export button to download filtered data as CSV
+
+## How It Works?
+
+### State Management with Zustand
+
+The application uses Zustand for state management with persistence middleware:
+
+```typescript
+// Transaction Store
+const useTransactionStore = create(
+  persist(
+    (set, get) => ({
+      transactions: [],
+      addTransaction: (transaction) => 
+        set((state) => ({ 
+          transactions: [...state.transactions, transaction] 
+        })),
+      // ... more actions
+    }),
+    { name: 'transaction-storage' }
+  )
+);
+```
+
+### Form Validation with Zod
+
+All forms are validated using Zod schemas:
+
+```typescript
+const transactionSchema = z.object({
+  type: z.enum(['income', 'expense']),
+  amount: z.number().positive('Amount must be positive'),
+  category: z.string().min(1, 'Category is required'),
+  date: z.date(),
+  description: z.string().optional(),
+});
+```
+
+### Chart Visualizations
+
+Interactive charts are built with Recharts:
+
+- **Area Chart**: Monthly income vs expense trends
+- **Pie Chart**: Category-wise expense distribution
+- **Bar Chart**: Monthly comparison analysis
+
+## Project Structure
 
 ```
 src/
 ├── components/
-│   ├── ui/              # Button, Modal, Input, Card, Select
-│   ├── layout/          # Header, Sidebar, Layout
-│   ├── transactions/    # TransactionForm, TransactionList, TransactionItem
-│   ├── categories/      # CategoryBadge
-│   ├── charts/          # CategoryPieChart, MonthlyBarChart, ExpenseChart
-│   └── filters/         # FilterBar
+│   ├── ui/              # Reusable UI components (Button, Modal, Input, Card, Select)
+│   ├── layout/          # Layout components (Header, Sidebar, Layout)
+│   ├── transactions/    # Transaction components (Form, List, Item)
+│   ├── categories/      # Category components (CategoryBadge)
+│   ├── charts/          # Chart components (PieChart, BarChart, AreaChart)
+│   └── filters/         # Filter components (FilterBar)
 ├── pages/
-│   ├── Dashboard.tsx    # Ana sayfa
-│   └── Transactions.tsx # İşlemler sayfası
+│   ├── Dashboard.tsx    # Main dashboard with analytics
+│   └── Transactions.tsx # Transaction management page
 ├── stores/
-│   ├── transactionStore.ts  # İşlem state'i
-│   ├── categoryStore.ts     # Kategori state'i
-│   └── filterStore.ts       # Filtre state'i
+│   ├── transactionStore.ts  # Transaction state management
+│   ├── categoryStore.ts     # Category state management
+│   └── filterStore.ts       # Filter state management
 ├── schemas/
-│   └── transactionSchema.ts # Zod validasyon
+│   └── transactionSchema.ts # Zod validation schemas
 ├── types/
-│   └── index.ts         # TypeScript tipleri
+│   └── index.ts         # TypeScript type definitions
 ├── utils/
-│   ├── localStorage.ts  # LocalStorage yardımcıları
-│   ├── formatters.ts    # Tarih/para formatlaması
-│   └── exportCSV.ts     # CSV export
-├── App.tsx
-├── main.tsx
-└── index.css
+│   ├── localStorage.ts  # LocalStorage helpers
+│   ├── formatters.ts    # Date and currency formatters
+│   └── exportCSV.ts     # CSV export functionality
+├── App.tsx              # Main application component
+├── main.tsx             # Application entry point
+└── index.css            # Global styles and Tailwind imports
 ```
 
-## Sayfalar
+## Customization
 
-### Dashboard (/)
-- Toplam bakiye, gelir ve gider kartları
-- Aylık trend grafiği (Area Chart)
-- Kategori dağılımı (Pie Chart)
-- Son 5 işlem listesi
+### Add Your Own Categories
 
-### İşlemler (/transactions)
-- Tam filtre desteği (tarih, tip, kategori, arama)
-- Tüm işlemlerin listesi
-- CSV export özelliği
-- Filtrelenmiş özet bilgiler
+You can customize categories in the category store:
 
-## Varsayılan Kategoriler
+```typescript
+// src/stores/categoryStore.ts
+const defaultExpenseCategories = [
+  { id: '1', name: 'Food', type: 'expense', color: '#EF4444' },
+  { id: '2', name: 'Transport', type: 'expense', color: '#F59E0B' },
+  // Add your custom categories here
+  { id: 'custom1', name: 'Subscriptions', type: 'expense', color: '#8B5CF6' },
+];
+```
 
-**Gider Kategorileri:**
-- Yiyecek, Ulaşım, Faturalar, Eğlence, Sağlık, Alışveriş, Diğer
+### Change Currency Format
 
-**Gelir Kategorileri:**
-- Maaş, Freelance, Yatırım, Hediye, Diğer
+Modify the currency formatter in utils:
 
-## Kullanım
+```typescript
+// src/utils/formatters.ts
+export const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD', // Change to your currency (EUR, GBP, TRY, etc.)
+  }).format(amount);
+};
+```
 
-1. **Yeni İşlem Ekle**: "Yeni İşlem" butonuna tıklayın
-2. **İşlem Tipi Seç**: Gelir veya Gider seçin
-3. **Detayları Girin**: Tutar, kategori, tarih ve açıklama
-4. **Kaydet**: İşlemi kaydedin
+### Customize Theme Colors
 
-## Geliştirme
+Update Tailwind configuration for custom colors:
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#3B82F6',
+        secondary: '#10B981',
+        // Add your custom colors
+      },
+    },
+  },
+};
+```
+
+## Features in Detail
+
+### Completed Features
+
+- ✅ Add, edit, and delete transactions
+- ✅ Income and expense categorization
+- ✅ Interactive dashboard with charts
+- ✅ Date range filtering
+- ✅ Category and type filtering
+- ✅ Search functionality
+- ✅ CSV data export
+- ✅ Dark mode support
+- ✅ Responsive design
+- ✅ LocalStorage persistence
+
+### Future Features
+
+- [ ] 🔮 Multi-currency support
+- [ ] 🔮 Budget goals and alerts
+- [ ] 🔮 Recurring transactions
+- [ ] 🔮 Bank account sync
+- [ ] 🔮 Receipt image upload
+- [ ] 🔮 Cloud synchronization
+- [ ] 🔮 Monthly/yearly reports
+- [ ] 🔮 Multi-language support
+
+## Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. **Fork the repository**
+2. **Create a feature branch**
 
 ```bash
-# Lint kontrolü
-npm run lint
-
-# Type kontrolü
-npx tsc --noEmit
+git checkout -b feature/amazing-feature
 ```
 
-## Deploy
-
-Netlify için build komutu:
+3. **Commit your changes**
 
 ```bash
-npm run build
+git commit -m "feat: add amazing feature"
 ```
 
-Build çıktısı `dist` klasöründe oluşur.
+4. **Push to the branch**
 
-## Lisans
+```bash
+git push origin feature/amazing-feature
+```
 
-MIT
+5. **Open a Pull Request**
+
+### Commit Message Convention
+
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation changes
+- `style:` - Code style changes (formatting, etc.)
+- `refactor:` - Code refactoring
+- `test:` - Adding or updating tests
+- `chore:` - Maintenance tasks
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Developer
+
+**Serkan Bayraktar**
+
+- Website: [serkanbayraktar.com](https://serkanbayraktar.com)
+- GitHub: [@Serkanbyx](https://github.com/Serkanbyx)
+- Email: [serkanbyx1@gmail.com](mailto:serkanbyx1@gmail.com)
+
+## Acknowledgments
+
+- [React](https://react.dev/) - UI Library
+- [Tailwind CSS](https://tailwindcss.com/) - CSS Framework
+- [Recharts](https://recharts.org/) - Charting Library
+- [Zustand](https://zustand-demo.pmnd.rs/) - State Management
+- [Lucide Icons](https://lucide.dev/) - Icon Library
+- [Vite](https://vitejs.dev/) - Build Tool
+
+## Contact
+
+Have questions or suggestions? Feel free to reach out!
+
+- Create an [Issue](https://github.com/Serkanbyx/expense-tracker/issues)
+- Email: [serkanbyx1@gmail.com](mailto:serkanbyx1@gmail.com)
+- Website: [serkanbayraktar.com](https://serkanbayraktar.com)
 
 ---
 
-**Geliştirici**: Expense Tracker Team
+⭐ If you like this project, don't forget to give it a star!
