@@ -17,6 +17,52 @@ interface ExpenseChartProps {
   title?: string;
 }
 
+interface FormattedChartData extends MonthlyChartData {
+  monthLabel: string;
+  balance: number;
+}
+
+interface AreaTooltipProps {
+  active?: boolean;
+  payload?: Array<{ value: number; dataKey: string; color: string }>;
+  label?: string;
+}
+
+/**
+ * Generates accessible description for area chart data
+ */
+function generateChartDescription(data: FormattedChartData[]): string {
+  const totalIncome = data.reduce((sum, item) => sum + item.income, 0);
+  const totalExpense = data.reduce((sum, item) => sum + item.expense, 0);
+  return `Gelir ve gider trendi: Toplam gelir ${formatCurrency(totalIncome)}, Toplam gider ${formatCurrency(totalExpense)}. ${data.length} aylık veri gösteriliyor.`;
+}
+
+/**
+ * Custom tooltip component for area chart
+ */
+function AreaChartTooltip({ active, payload, label }: AreaTooltipProps) {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+        <p className="font-medium text-gray-900 dark:text-gray-100 mb-2">{label}</p>
+        {payload.map((entry, index) => {
+          const labels: Record<string, string> = {
+            income: 'Gelir',
+            expense: 'Gider',
+            balance: 'Bakiye',
+          };
+          return (
+            <p key={index} className="text-sm" style={{ color: entry.color }}>
+              {labels[entry.dataKey] || entry.dataKey}: {formatCurrency(entry.value)}
+            </p>
+          );
+        })}
+      </div>
+    );
+  }
+  return null;
+}
+
 export default function ExpenseChart({ data, title }: ExpenseChartProps) {
   if (data.length === 0) {
     return (
@@ -27,51 +73,46 @@ export default function ExpenseChart({ data, title }: ExpenseChartProps) {
   }
 
   // Format month labels and calculate balance
-  const formattedData = data.map((item) => ({
+  const formattedData: FormattedChartData[] = data.map((item) => ({
     ...item,
     monthLabel: format(parseISO(`${item.month}-01`), 'MMM yyyy', { locale: tr }),
     balance: item.income - item.expense,
   }));
 
-  // Custom tooltip
-  const CustomTooltip = ({
-    active,
-    payload,
-    label,
-  }: {
-    active?: boolean;
-    payload?: Array<{ value: number; dataKey: string; color: string }>;
-    label?: string;
-  }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-          <p className="font-medium text-gray-900 dark:text-gray-100 mb-2">{label}</p>
-          {payload.map((entry, index) => {
-            const labels: Record<string, string> = {
-              income: 'Gelir',
-              expense: 'Gider',
-              balance: 'Bakiye',
-            };
-            return (
-              <p key={index} className="text-sm" style={{ color: entry.color }}>
-                {labels[entry.dataKey] || entry.dataKey}: {formatCurrency(entry.value)}
-              </p>
-            );
-          })}
-        </div>
-      );
-    }
-    return null;
-  };
+  const chartDescription = generateChartDescription(formattedData);
 
   return (
-    <div>
+    <div
+      role="img"
+      aria-label={title ? `${title} - ${chartDescription}` : chartDescription}
+    >
       {title && (
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
           {title}
         </h3>
       )}
+      {/* Screen reader only data table */}
+      <table className="sr-only">
+        <caption>{title || 'Aylık Gelir/Gider Trendi'}</caption>
+        <thead>
+          <tr>
+            <th scope="col">Ay</th>
+            <th scope="col">Gelir</th>
+            <th scope="col">Gider</th>
+            <th scope="col">Bakiye</th>
+          </tr>
+        </thead>
+        <tbody>
+          {formattedData.map((item, index) => (
+            <tr key={index}>
+              <td>{item.monthLabel}</td>
+              <td>{formatCurrency(item.income)}</td>
+              <td>{formatCurrency(item.expense)}</td>
+              <td>{formatCurrency(item.balance)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       <ResponsiveContainer width="100%" height={280}>
         <AreaChart data={formattedData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
           <defs>
@@ -97,7 +138,7 @@ export default function ExpenseChart({ data, title }: ExpenseChartProps) {
             tickLine={{ stroke: '#d1d5db' }}
             tickFormatter={(value) => `₺${(value / 1000).toFixed(0)}k`}
           />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={<AreaChartTooltip />} />
           <Area
             type="monotone"
             dataKey="income"

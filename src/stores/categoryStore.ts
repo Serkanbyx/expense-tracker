@@ -4,6 +4,14 @@ import { v4 as uuidv4 } from 'uuid';
 import type { Category } from '../types';
 
 /**
+ * Result type for store operations
+ */
+interface OperationResult {
+  success: boolean;
+  error?: string;
+}
+
+/**
  * Default expense categories
  */
 const DEFAULT_EXPENSE_CATEGORIES: Category[] = [
@@ -29,14 +37,30 @@ const DEFAULT_INCOME_CATEGORIES: Category[] = [
 
 const DEFAULT_CATEGORIES = [...DEFAULT_EXPENSE_CATEGORIES, ...DEFAULT_INCOME_CATEGORIES];
 
+/**
+ * Validates category data before saving
+ */
+function validateCategoryData(data: Partial<Omit<Category, 'id'>>): string | null {
+  if (data.name !== undefined && (!data.name || data.name.trim() === '')) {
+    return 'Kategori adı gereklidir';
+  }
+  if (data.type !== undefined && !['income', 'expense'].includes(data.type)) {
+    return 'Geçersiz kategori tipi';
+  }
+  if (data.color !== undefined && !/^#[0-9A-Fa-f]{6}$/.test(data.color)) {
+    return 'Geçersiz renk kodu';
+  }
+  return null;
+}
+
 interface CategoryStore {
   categories: Category[];
   
   // Actions
-  addCategory: (category: Omit<Category, 'id'>) => void;
-  updateCategory: (id: string, category: Partial<Category>) => void;
-  deleteCategory: (id: string) => void;
-  resetCategories: () => void;
+  addCategory: (category: Omit<Category, 'id'>) => OperationResult;
+  updateCategory: (id: string, category: Partial<Category>) => OperationResult;
+  deleteCategory: (id: string) => OperationResult;
+  resetCategories: () => OperationResult;
   
   // Selectors
   getCategoriesByType: (type: 'income' | 'expense') => Category[];
@@ -50,37 +74,100 @@ export const useCategoryStore = create<CategoryStore>()(
       categories: DEFAULT_CATEGORIES,
 
       addCategory: (categoryData) => {
-        const newCategory: Category = {
-          ...categoryData,
-          id: uuidv4(),
-        };
-        set((state) => ({
-          categories: [...state.categories, newCategory],
-        }));
+        try {
+          // Validate data
+          const validationError = validateCategoryData(categoryData);
+          if (validationError) {
+            console.error('Validation error:', validationError);
+            return { success: false, error: validationError };
+          }
+
+          // Check for duplicate name
+          const existingCategory = get().categories.find(
+            (cat) => cat.name.toLowerCase() === categoryData.name.toLowerCase() && cat.type === categoryData.type
+          );
+          if (existingCategory) {
+            return { success: false, error: 'Bu isimde bir kategori zaten mevcut' };
+          }
+
+          const newCategory: Category = {
+            ...categoryData,
+            id: uuidv4(),
+          };
+          set((state) => ({
+            categories: [...state.categories, newCategory],
+          }));
+          return { success: true };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Kategori eklenirken bir hata oluştu';
+          console.error('Add category error:', errorMessage);
+          return { success: false, error: errorMessage };
+        }
       },
 
       updateCategory: (id, categoryData) => {
-        set((state) => ({
-          categories: state.categories.map((cat) =>
-            cat.id === id ? { ...cat, ...categoryData } : cat
-          ),
-        }));
+        try {
+          const { categories } = get();
+          const existingCategory = categories.find((cat) => cat.id === id);
+          
+          if (!existingCategory) {
+            return { success: false, error: 'Kategori bulunamadı' };
+          }
+
+          // Validate data
+          const validationError = validateCategoryData(categoryData);
+          if (validationError) {
+            return { success: false, error: validationError };
+          }
+
+          set((state) => ({
+            categories: state.categories.map((cat) =>
+              cat.id === id ? { ...cat, ...categoryData } : cat
+            ),
+          }));
+          return { success: true };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Kategori güncellenirken bir hata oluştu';
+          console.error('Update category error:', errorMessage);
+          return { success: false, error: errorMessage };
+        }
       },
 
       deleteCategory: (id) => {
-        // Prevent deleting default categories
-        const isDefault = DEFAULT_CATEGORIES.some((cat) => cat.id === id);
-        if (isDefault) {
-          console.warn('Cannot delete default category');
-          return;
+        try {
+          // Prevent deleting default categories
+          const isDefault = DEFAULT_CATEGORIES.some((cat) => cat.id === id);
+          if (isDefault) {
+            return { success: false, error: 'Varsayılan kategoriler silinemez' };
+          }
+
+          const { categories } = get();
+          const existingCategory = categories.find((cat) => cat.id === id);
+          
+          if (!existingCategory) {
+            return { success: false, error: 'Kategori bulunamadı' };
+          }
+
+          set((state) => ({
+            categories: state.categories.filter((cat) => cat.id !== id),
+          }));
+          return { success: true };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Kategori silinirken bir hata oluştu';
+          console.error('Delete category error:', errorMessage);
+          return { success: false, error: errorMessage };
         }
-        set((state) => ({
-          categories: state.categories.filter((cat) => cat.id !== id),
-        }));
       },
 
       resetCategories: () => {
-        set({ categories: DEFAULT_CATEGORIES });
+        try {
+          set({ categories: DEFAULT_CATEGORIES });
+          return { success: true };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Kategoriler sıfırlanırken bir hata oluştu';
+          console.error('Reset categories error:', errorMessage);
+          return { success: false, error: errorMessage };
+        }
       },
 
       getCategoriesByType: (type) => {

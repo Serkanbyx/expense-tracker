@@ -6,7 +6,7 @@ export interface Transaction {
   type: 'income' | 'expense';
   amount: number;
   category: string;
-  description: string;
+  description?: string;
   date: string;
   createdAt: string;
 }
@@ -42,7 +42,7 @@ export interface TransactionFormData {
   type: 'income' | 'expense';
   amount: number;
   category: string;
-  description: string;
+  description?: string;
   date: string;
 }
 

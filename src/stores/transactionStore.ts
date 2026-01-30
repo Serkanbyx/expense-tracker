@@ -6,14 +6,22 @@ import type { Transaction, TransactionFormData, FilterState, TransactionSummary,
 import { getCurrentISOString } from '../utils/formatters';
 import { useCategoryStore } from './categoryStore';
 
+/**
+ * Result type for store operations
+ */
+interface OperationResult {
+  success: boolean;
+  error?: string;
+}
+
 interface TransactionStore {
   transactions: Transaction[];
   
   // Actions
-  addTransaction: (data: TransactionFormData) => void;
-  updateTransaction: (id: string, data: Partial<TransactionFormData>) => void;
-  deleteTransaction: (id: string) => void;
-  clearAllTransactions: () => void;
+  addTransaction: (data: TransactionFormData) => OperationResult;
+  updateTransaction: (id: string, data: Partial<TransactionFormData>) => OperationResult;
+  deleteTransaction: (id: string) => OperationResult;
+  clearAllTransactions: () => OperationResult;
   
   // Selectors
   getFilteredTransactions: (filters: FilterState) => Transaction[];
@@ -23,38 +31,112 @@ interface TransactionStore {
   getMonthlyChartData: (transactions?: Transaction[]) => MonthlyChartData[];
 }
 
+/**
+ * Validates transaction data before saving
+ */
+function validateTransactionData(data: TransactionFormData): string | null {
+  if (!data.type || !['income', 'expense'].includes(data.type)) {
+    return 'Geçersiz işlem tipi';
+  }
+  if (typeof data.amount !== 'number' || data.amount <= 0) {
+    return 'Tutar 0\'dan büyük olmalıdır';
+  }
+  if (!data.category || data.category.trim() === '') {
+    return 'Kategori seçilmelidir';
+  }
+  if (!data.date) {
+    return 'Tarih seçilmelidir';
+  }
+  return null;
+}
+
 export const useTransactionStore = create<TransactionStore>()(
   persist(
     (set, get) => ({
       transactions: [],
 
       addTransaction: (data) => {
-        const newTransaction: Transaction = {
-          id: uuidv4(),
-          ...data,
-          createdAt: getCurrentISOString(),
-        };
-        set((state) => ({
-          transactions: [newTransaction, ...state.transactions],
-        }));
+        try {
+          // Validate data
+          const validationError = validateTransactionData(data);
+          if (validationError) {
+            console.error('Validation error:', validationError);
+            return { success: false, error: validationError };
+          }
+
+          const newTransaction: Transaction = {
+            id: uuidv4(),
+            ...data,
+            description: data.description || '',
+            createdAt: getCurrentISOString(),
+          };
+          set((state) => ({
+            transactions: [newTransaction, ...state.transactions],
+          }));
+          return { success: true };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'İşlem eklenirken bir hata oluştu';
+          console.error('Add transaction error:', errorMessage);
+          return { success: false, error: errorMessage };
+        }
       },
 
       updateTransaction: (id, data) => {
-        set((state) => ({
-          transactions: state.transactions.map((t) =>
-            t.id === id ? { ...t, ...data } : t
-          ),
-        }));
+        try {
+          const { transactions } = get();
+          const existingTransaction = transactions.find((t) => t.id === id);
+          
+          if (!existingTransaction) {
+            return { success: false, error: 'İşlem bulunamadı' };
+          }
+
+          // Validate amount if provided
+          if (data.amount !== undefined && (typeof data.amount !== 'number' || data.amount <= 0)) {
+            return { success: false, error: 'Tutar 0\'dan büyük olmalıdır' };
+          }
+
+          set((state) => ({
+            transactions: state.transactions.map((t) =>
+              t.id === id ? { ...t, ...data } : t
+            ),
+          }));
+          return { success: true };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'İşlem güncellenirken bir hata oluştu';
+          console.error('Update transaction error:', errorMessage);
+          return { success: false, error: errorMessage };
+        }
       },
 
       deleteTransaction: (id) => {
-        set((state) => ({
-          transactions: state.transactions.filter((t) => t.id !== id),
-        }));
+        try {
+          const { transactions } = get();
+          const existingTransaction = transactions.find((t) => t.id === id);
+          
+          if (!existingTransaction) {
+            return { success: false, error: 'İşlem bulunamadı' };
+          }
+
+          set((state) => ({
+            transactions: state.transactions.filter((t) => t.id !== id),
+          }));
+          return { success: true };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'İşlem silinirken bir hata oluştu';
+          console.error('Delete transaction error:', errorMessage);
+          return { success: false, error: errorMessage };
+        }
       },
 
       clearAllTransactions: () => {
-        set({ transactions: [] });
+        try {
+          set({ transactions: [] });
+          return { success: true };
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'İşlemler temizlenirken bir hata oluştu';
+          console.error('Clear transactions error:', errorMessage);
+          return { success: false, error: errorMessage };
+        }
       },
 
       getFilteredTransactions: (filters) => {
@@ -85,7 +167,7 @@ export const useTransactionStore = create<TransactionStore>()(
           // Filter by search query
           if (filters.searchQuery) {
             const query = filters.searchQuery.toLowerCase();
-            const matchesDescription = t.description.toLowerCase().includes(query);
+            const matchesDescription = (t.description || '').toLowerCase().includes(query);
             const matchesCategory = t.category.toLowerCase().includes(query);
             
             if (!matchesDescription && !matchesCategory) {

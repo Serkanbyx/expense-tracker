@@ -11,6 +11,7 @@ import { CategoryPieChart, ExpenseChart } from '../components/charts';
 export default function Dashboard() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   
+  // Zustand store selectors - optimized by Zustand internally
   const transactions = useTransactionStore((state) => state.transactions);
   const getSummary = useTransactionStore((state) => state.getSummary);
   const getRecentTransactions = useTransactionStore((state) => state.getRecentTransactions);
@@ -18,6 +19,7 @@ export default function Dashboard() {
   const getMonthlyChartData = useTransactionStore((state) => state.getMonthlyChartData);
   const deleteTransaction = useTransactionStore((state) => state.deleteTransaction);
 
+  // Computed values from store selectors
   const summary = getSummary();
   const recentTransactions = getRecentTransactions(5);
   const expenseChartData = getCategoryChartData('expense');
