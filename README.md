@@ -24,7 +24,7 @@ A modern, user-friendly income and expense tracking application. Track your fina
 
 ## Live Demo
 
-[🎮 View Live Demo](https://expense-tracker-demo.netlify.app)
+[🎮 View Live Demo](https://expense-trackerrrrrrrr.netlify.app/)
 
 ## Technologies
 
