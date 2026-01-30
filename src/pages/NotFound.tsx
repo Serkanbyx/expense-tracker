@@ -36,7 +36,7 @@ export default function NotFound() {
           </Link>
           
           <Button
-            variant="outline"
+            variant="secondary"
             onClick={() => window.history.back()}
             className="w-full sm:w-auto"
           >

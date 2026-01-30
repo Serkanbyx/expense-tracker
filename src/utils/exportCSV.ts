@@ -24,7 +24,7 @@ export function exportTransactionsToCSV(transactions: Transaction[]): void {
       t.type === 'income' ? 'Gelir' : 'Gider',
       category?.name || t.category,
       t.amount.toFixed(2),
-      `"${t.description.replace(/"/g, '""')}"`, // Escape quotes in description
+      `"${(t.description || '').replace(/"/g, '""')}"`, // Escape quotes in description
       formatDate(t.createdAt, 'dd/MM/yyyy HH:mm'),
     ];
   });

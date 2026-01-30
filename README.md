@@ -139,24 +139,25 @@ const transactionSchema = z.object({
 
 Interactive charts are built with Recharts:
 
-- **Area Chart**: Monthly income vs expense trends
-- **Pie Chart**: Category-wise expense distribution
-- **Bar Chart**: Monthly comparison analysis
+- **ExpenseChart**: Monthly income vs expense trends (Area Chart)
+- **CategoryPieChart**: Category-wise expense distribution (Pie Chart)
+- **MonthlyBarChart**: Monthly comparison analysis (Bar Chart)
 
 ## Project Structure
 
 ```
 src/
 ├── components/
-│   ├── ui/              # Reusable UI components (Button, Modal, Input, Card, Select)
+│   ├── ui/              # Reusable UI components (Button, Modal, Input, Card, Select, ConfirmModal)
 │   ├── layout/          # Layout components (Header, Sidebar, Layout)
 │   ├── transactions/    # Transaction components (Form, List, Item)
 │   ├── categories/      # Category components (CategoryBadge)
-│   ├── charts/          # Chart components (PieChart, BarChart, AreaChart)
+│   ├── charts/          # Chart components (CategoryPieChart, MonthlyBarChart, ExpenseChart)
 │   └── filters/         # Filter components (FilterBar)
 ├── pages/
 │   ├── Dashboard.tsx    # Main dashboard with analytics
-│   └── Transactions.tsx # Transaction management page
+│   ├── Transactions.tsx # Transaction management page
+│   └── NotFound.tsx     # 404 error page
 ├── stores/
 │   ├── transactionStore.ts  # Transaction state management
 │   ├── categoryStore.ts     # Category state management

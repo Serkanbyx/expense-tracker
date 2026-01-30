@@ -147,7 +147,7 @@ export default function ConfirmModal({
         <div className="flex gap-3 px-6 pb-6">
           <Button
             ref={cancelButtonRef}
-            variant="outline"
+            variant="secondary"
             onClick={onClose}
             disabled={isLoading}
             className="flex-1"
