@@ -78,7 +78,7 @@ export default function Modal({
             size="sm"
             onClick={onClose}
             className="p-1.5 -mr-1.5"
-            aria-label="Kapat"
+            aria-label="Close"
           >
             <X className="w-5 h-5" />
           </Button>

@@ -40,7 +40,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
             size="sm"
             className="lg:hidden p-2"
             onClick={onMenuClick}
-            aria-label="Menüyü aç"
+            aria-label="Open menu"
           >
             <Menu className="w-5 h-5" />
           </Button>
@@ -62,7 +62,7 @@ export default function Header({ onMenuClick }: HeaderProps) {
             size="sm"
             className="p-2"
             onClick={toggleTheme}
-            aria-label={isDark ? 'Açık tema' : 'Koyu tema'}
+            aria-label={isDark ? 'Light theme' : 'Dark theme'}
           >
             {isDark ? (
               <Sun className="w-5 h-5" />

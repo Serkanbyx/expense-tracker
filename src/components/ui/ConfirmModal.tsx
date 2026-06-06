@@ -26,8 +26,8 @@ export default function ConfirmModal({
   onConfirm,
   title,
   message,
-  confirmText = 'Onayla',
-  cancelText = 'İptal',
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
   variant = 'danger',
   isLoading = false,
 }: ConfirmModalProps) {
@@ -161,7 +161,7 @@ export default function ConfirmModal({
             disabled={isLoading}
             className="flex-1"
           >
-            {isLoading ? 'İşleniyor...' : confirmText}
+            {isLoading ? 'Processing...' : confirmText}
           </Button>
         </div>
       </div>

@@ -1,13 +1,13 @@
 import { format, parseISO, isValid } from 'date-fns';
-import { tr } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 
 /**
- * Format number as Turkish Lira currency
+ * Format number as US Dollar currency
  */
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('tr-TR', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'TRY',
+    currency: 'USD',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount);
@@ -20,7 +20,7 @@ export function formatDate(dateString: string, formatStr: string = 'dd MMM yyyy'
   try {
     const date = parseISO(dateString);
     if (!isValid(date)) return dateString;
-    return format(date, formatStr, { locale: tr });
+    return format(date, formatStr, { locale: enUS });
   } catch {
     return dateString;
   }
@@ -57,7 +57,7 @@ export function getCurrentISOString(): string {
  * Format number with thousand separators
  */
 export function formatNumber(num: number): string {
-  return new Intl.NumberFormat('tr-TR').format(num);
+  return new Intl.NumberFormat('en-US').format(num);
 }
 
 /**

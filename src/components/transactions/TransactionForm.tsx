@@ -80,7 +80,7 @@ export default function TransactionForm({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={editTransaction ? 'İşlemi Düzenle' : 'Yeni İşlem'}
+      title={editTransaction ? 'Edit Transaction' : 'New Transaction'}
       size="md"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -103,7 +103,7 @@ export default function TransactionForm({
                     }
                   `}
                 >
-                  Gider
+                  Expense
                 </button>
                 <button
                   type="button"
@@ -117,7 +117,7 @@ export default function TransactionForm({
                     }
                   `}
                 >
-                  Gelir
+                  Income
                 </button>
               </>
             )}
@@ -131,7 +131,7 @@ export default function TransactionForm({
           render={({ field }) => (
             <Input
               type="number"
-              label="Tutar (₺)"
+              label="Amount ($)"
               placeholder="0.00"
               step="0.01"
               min="0"
@@ -148,7 +148,7 @@ export default function TransactionForm({
 
         {/* Category */}
         <Select
-          label="Kategori"
+          label="Category"
           options={categories.map((cat) => ({
             value: cat.id,
             label: cat.name,
@@ -160,7 +160,7 @@ export default function TransactionForm({
         {/* Date */}
         <Input
           type="date"
-          label="Tarih"
+          label="Date"
           error={errors.date?.message}
           {...register('date')}
         />
@@ -168,8 +168,8 @@ export default function TransactionForm({
         {/* Description */}
         <Input
           type="text"
-          label="Açıklama (Opsiyonel)"
-          placeholder="İşlem açıklaması..."
+          label="Description (Optional)"
+          placeholder="Transaction description..."
           error={errors.description?.message}
           {...register('description')}
         />
@@ -182,7 +182,7 @@ export default function TransactionForm({
             className="flex-1"
             onClick={onClose}
           >
-            İptal
+            Cancel
           </Button>
           <Button
             type="submit"
@@ -190,7 +190,7 @@ export default function TransactionForm({
             className="flex-1"
             isLoading={isSubmitting}
           >
-            {editTransaction ? 'Güncelle' : 'Ekle'}
+            {editTransaction ? 'Update' : 'Add'}
           </Button>
         </div>
       </form>

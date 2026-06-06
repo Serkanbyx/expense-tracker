@@ -16,7 +16,7 @@ const navItems = [
   {
     to: '/transactions',
     icon: Receipt,
-    label: 'İşlemler',
+    label: 'Transactions',
   },
 ];
 
@@ -49,14 +49,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             size="sm"
             className="p-2"
             onClick={onClose}
-            aria-label="Menüyü kapat"
+            aria-label="Close menu"
           >
             <X className="w-5 h-5" />
           </Button>
         </div>
 
         {/* Navigation */}
-        <nav className="px-4 py-4 lg:pt-6 pb-16">
+        <nav className="px-4 py-4 lg:pt-6">
           <ul className="space-y-1">
             {navItems.map((item) => (
               <li key={item.to}>

@@ -14,11 +14,11 @@ interface TransactionListProps {
 export default function TransactionList({
   transactions,
   onDelete,
-  emptyMessage = 'Henüz işlem yok',
+  emptyMessage = 'No transactions yet',
 }: TransactionListProps) {
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleEdit = (transaction: Transaction) => {
     setEditingTransaction(transaction);
@@ -30,19 +30,19 @@ export default function TransactionList({
     setEditingTransaction(null);
   };
 
-  const handleDeleteClick = (id: string) => {
-    setDeleteConfirmId(id);
+  const handleDelete = (id: string) => {
+    setDeletingId(id);
   };
 
   const handleConfirmDelete = () => {
-    if (deleteConfirmId) {
-      onDelete(deleteConfirmId);
-      setDeleteConfirmId(null);
+    if (deletingId) {
+      onDelete(deletingId);
+      setDeletingId(null);
     }
   };
 
   const handleCancelDelete = () => {
-    setDeleteConfirmId(null);
+    setDeletingId(null);
   };
 
   if (transactions.length === 0) {
@@ -50,7 +50,7 @@ export default function TransactionList({
       <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
         <Receipt className="w-12 h-12 mb-4 opacity-50" />
         <p className="text-lg font-medium">{emptyMessage}</p>
-        <p className="text-sm mt-1">Yeni bir işlem ekleyerek başlayın</p>
+        <p className="text-sm mt-1">Get started by adding a new transaction</p>
       </div>
     );
   }
@@ -63,7 +63,7 @@ export default function TransactionList({
             key={transaction.id}
             transaction={transaction}
             onEdit={handleEdit}
-            onDelete={handleDeleteClick}
+            onDelete={handleDelete}
           />
         ))}
       </div>
@@ -75,13 +75,13 @@ export default function TransactionList({
       />
 
       <ConfirmModal
-        isOpen={deleteConfirmId !== null}
+        isOpen={deletingId !== null}
         onClose={handleCancelDelete}
         onConfirm={handleConfirmDelete}
-        title="İşlemi Sil"
-        message="Bu işlemi silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
-        confirmText="Sil"
-        cancelText="İptal"
+        title="Delete Transaction"
+        message="Are you sure you want to delete this transaction? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
         variant="danger"
       />
     </>

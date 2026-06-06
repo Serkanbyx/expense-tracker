@@ -12,13 +12,11 @@ import { FilterBar } from '../components/filters';
 export default function Transactions() {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  // Zustand store selectors - optimized by Zustand internally
   const getFilteredTransactions = useTransactionStore((state) => state.getFilteredTransactions);
   const deleteTransaction = useTransactionStore((state) => state.deleteTransaction);
   const getSummary = useTransactionStore((state) => state.getSummary);
   const filters = useFilterStore((state) => state.filters);
 
-  // Computed values from store selectors
   const filteredTransactions = getFilteredTransactions(filters);
   const summary = getSummary(filteredTransactions);
 
@@ -31,9 +29,9 @@ export default function Transactions() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">İşlemler</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Transactions</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Tüm gelir ve giderlerinizi yönetin
+            Manage all your income and expenses
           </p>
         </div>
         <div className="flex gap-2">
@@ -43,40 +41,40 @@ export default function Transactions() {
             onClick={handleExportCSV}
             disabled={filteredTransactions.length === 0}
           >
-            CSV İndir
+            Export CSV
           </Button>
           <Button
             variant="primary"
             leftIcon={<Plus className="w-4 h-4" />}
             onClick={() => setIsFormOpen(true)}
           >
-            Yeni İşlem
+            New Transaction
           </Button>
         </div>
       </div>
 
       {/* Filters */}
       <Card>
-        <CardHeader title="Filtreler" subtitle="İşlemlerinizi filtreleyin" />
+        <CardHeader title="Filters" subtitle="Filter your transactions" />
         <FilterBar />
       </Card>
 
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-primary-50 dark:bg-primary-900/20 rounded-xl p-4">
-          <p className="text-sm text-primary-600 dark:text-primary-400">Filtrelenmiş Gelir</p>
+          <p className="text-sm text-primary-600 dark:text-primary-400">Filtered Income</p>
           <p className="text-xl font-bold text-primary-700 dark:text-primary-300">
             +{formatCurrency(summary.totalIncome)}
           </p>
         </div>
         <div className="bg-danger-50 dark:bg-danger-900/20 rounded-xl p-4">
-          <p className="text-sm text-danger-600 dark:text-danger-400">Filtrelenmiş Gider</p>
+          <p className="text-sm text-danger-600 dark:text-danger-400">Filtered Expense</p>
           <p className="text-xl font-bold text-danger-700 dark:text-danger-300">
             -{formatCurrency(summary.totalExpense)}
           </p>
         </div>
         <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400">Net Bakiye</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Net Balance</p>
           <p className={`text-xl font-bold ${summary.balance >= 0 ? 'text-primary-600 dark:text-primary-400' : 'text-danger-600 dark:text-danger-400'}`}>
             {formatCurrency(summary.balance)}
           </p>
@@ -86,13 +84,13 @@ export default function Transactions() {
       {/* Transaction List */}
       <Card>
         <CardHeader
-          title={`İşlem Listesi (${filteredTransactions.length})`}
-          subtitle="Tüm işlemleriniz tarihe göre sıralanmış"
+          title={`Transaction List (${filteredTransactions.length})`}
+          subtitle="All your transactions sorted by date"
         />
         <TransactionList
           transactions={filteredTransactions}
           onDelete={deleteTransaction}
-          emptyMessage="Filtrelere uygun işlem bulunamadı"
+          emptyMessage="No transactions match the filters"
         />
       </Card>
 

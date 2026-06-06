@@ -74,7 +74,7 @@ export default function TransactionItem({
           size="sm"
           className="p-2"
           onClick={() => onEdit(transaction)}
-          aria-label="Düzenle"
+          aria-label="Edit"
         >
           <Edit2 className="w-4 h-4" />
         </Button>
@@ -83,7 +83,7 @@ export default function TransactionItem({
           size="sm"
           className="p-2 text-danger-500 hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20"
           onClick={() => onDelete(transaction.id)}
-          aria-label="Sil"
+          aria-label="Delete"
         >
           <Trash2 className="w-4 h-4" />
         </Button>

@@ -6,25 +6,27 @@ import { formatDate } from './formatters';
  * Convert transactions to CSV format and trigger download
  */
 export function exportTransactionsToCSV(transactions: Transaction[]): void {
+  // Defensive guard: UI disables the export action when there is no data,
+  // so this path is not expected to be reached during normal usage.
   if (transactions.length === 0) {
-    alert('Dışa aktarılacak işlem bulunamadı.');
+    console.warn('exportTransactionsToCSV: no transactions to export.');
     return;
   }
 
   const categoryStore = useCategoryStore.getState();
 
   // CSV headers
-  const headers = ['Tarih', 'Tip', 'Kategori', 'Tutar', 'Açıklama', 'Oluşturulma Tarihi'];
+  const headers = ['Date', 'Type', 'Category', 'Amount', 'Description', 'Created At'];
 
   // Convert transactions to CSV rows
   const rows = transactions.map((t) => {
     const category = categoryStore.getCategoryById(t.category);
     return [
       formatDate(t.date, 'dd/MM/yyyy'),
-      t.type === 'income' ? 'Gelir' : 'Gider',
+      t.type === 'income' ? 'Income' : 'Expense',
       category?.name || t.category,
       t.amount.toFixed(2),
-      `"${(t.description || '').replace(/"/g, '""')}"`, // Escape quotes in description
+      `"${t.description.replace(/"/g, '""')}"`, // Escape quotes in description
       formatDate(t.createdAt, 'dd/MM/yyyy HH:mm'),
     ];
   });
@@ -35,7 +37,7 @@ export function exportTransactionsToCSV(transactions: Transaction[]): void {
     ...rows.map((row) => row.join(';')),
   ].join('\n');
 
-  // Add BOM for Excel Turkish character support
+  // Add BOM for proper UTF-8 character support in Excel
   const BOM = '\uFEFF';
   const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
 
@@ -67,11 +69,11 @@ export function exportSummaryToCSV(
   totalExpense: number,
   balance: number
 ): void {
-  const headers = ['Metrik', 'Değer'];
+  const headers = ['Metric', 'Value'];
   const rows = [
-    ['Toplam Gelir', totalIncome.toFixed(2)],
-    ['Toplam Gider', totalExpense.toFixed(2)],
-    ['Net Bakiye', balance.toFixed(2)],
+    ['Total Income', totalIncome.toFixed(2)],
+    ['Total Expense', totalExpense.toFixed(2)],
+    ['Net Balance', balance.toFixed(2)],
   ];
 
   const csvContent = [

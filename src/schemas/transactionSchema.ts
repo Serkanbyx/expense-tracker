@@ -5,33 +5,33 @@ import { z } from 'zod';
  */
 export const transactionSchema = z.object({
   type: z.enum(['income', 'expense'], {
-    required_error: 'İşlem tipi seçiniz',
+    required_error: 'Select a transaction type',
   }),
   amount: z
     .number({
-      required_error: 'Tutar gereklidir',
-      invalid_type_error: 'Geçerli bir tutar giriniz',
+      required_error: 'Amount is required',
+      invalid_type_error: 'Enter a valid amount',
     })
-    .positive('Tutar 0\'dan büyük olmalıdır')
-    .max(999999999, 'Tutar çok büyük'),
+    .positive('Amount must be greater than 0')
+    .max(999999999, 'Amount is too large'),
   category: z
     .string({
-      required_error: 'Kategori seçiniz',
+      required_error: 'Select a category',
     })
-    .min(1, 'Kategori seçiniz'),
+    .min(1, 'Select a category'),
   description: z
     .string()
-    .max(200, 'Açıklama en fazla 200 karakter olabilir')
+    .max(200, 'Description can be at most 200 characters')
     .optional()
     .default(''),
   date: z
     .string({
-      required_error: 'Tarih seçiniz',
+      required_error: 'Select a date',
     })
     .refine((val) => {
       const date = new Date(val);
       return !isNaN(date.getTime());
-    }, 'Geçerli bir tarih giriniz'),
+    }, 'Enter a valid date'),
 });
 
 /**
@@ -40,16 +40,16 @@ export const transactionSchema = z.object({
 export const categorySchema = z.object({
   name: z
     .string({
-      required_error: 'Kategori adı gereklidir',
+      required_error: 'Category name is required',
     })
-    .min(1, 'Kategori adı gereklidir')
-    .max(50, 'Kategori adı en fazla 50 karakter olabilir'),
+    .min(1, 'Category name is required')
+    .max(50, 'Category name can be at most 50 characters'),
   type: z.enum(['income', 'expense'], {
-    required_error: 'Kategori tipi seçiniz',
+    required_error: 'Select a category type',
   }),
   color: z
     .string()
-    .regex(/^#[0-9A-Fa-f]{6}$/, 'Geçerli bir renk kodu giriniz')
+    .regex(/^#[0-9A-Fa-f]{6}$/, 'Enter a valid color code')
     .default('#22c55e'),
   icon: z.string().default('tag'),
 });

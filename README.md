@@ -24,7 +24,7 @@ A modern, user-friendly income and expense tracking application. Track your fina
 
 ## Live Demo
 
-[🎮 View Live Demo](https://expense-trackerrrrrrrr.netlify.app/)
+[🎮 View Live Demo](https://expense-tracker-demo.netlify.app)
 
 ## Technologies
 
@@ -88,6 +88,8 @@ npm run lint
 npx tsc --noEmit
 ```
 
+> Interested in how the project was built? See the original [Build Guide](docs/build-guide.md) for the step-by-step roadmap and architecture notes.
+
 ## Usage
 
 1. **Add a New Transaction**: Click the "New Transaction" button in the header
@@ -139,25 +141,25 @@ const transactionSchema = z.object({
 
 Interactive charts are built with Recharts:
 
-- **ExpenseChart**: Monthly income vs expense trends (Area Chart)
-- **CategoryPieChart**: Category-wise expense distribution (Pie Chart)
-- **MonthlyBarChart**: Monthly comparison analysis (Bar Chart)
+- **Area Chart**: Monthly income vs expense trends
+- **Pie Chart**: Category-wise expense distribution
+- **Bar Chart**: Monthly comparison analysis
 
 ## Project Structure
 
 ```
 src/
 ├── components/
-│   ├── ui/              # Reusable UI components (Button, Modal, Input, Card, Select, ConfirmModal)
+│   ├── ui/              # Reusable UI components (Button, Modal, Input, Card, Select)
 │   ├── layout/          # Layout components (Header, Sidebar, Layout)
 │   ├── transactions/    # Transaction components (Form, List, Item)
 │   ├── categories/      # Category components (CategoryBadge)
-│   ├── charts/          # Chart components (CategoryPieChart, MonthlyBarChart, ExpenseChart)
+│   ├── charts/          # Chart components (PieChart, BarChart, AreaChart)
 │   └── filters/         # Filter components (FilterBar)
 ├── pages/
 │   ├── Dashboard.tsx    # Main dashboard with analytics
 │   ├── Transactions.tsx # Transaction management page
-│   └── NotFound.tsx     # 404 error page
+│   └── NotFound.tsx     # 404 fallback page
 ├── stores/
 │   ├── transactionStore.ts  # Transaction state management
 │   ├── categoryStore.ts     # Category state management
@@ -183,26 +185,28 @@ You can customize categories in the category store:
 
 ```typescript
 // src/stores/categoryStore.ts
-const defaultExpenseCategories = [
-  { id: '1', name: 'Food', type: 'expense', color: '#EF4444' },
-  { id: '2', name: 'Transport', type: 'expense', color: '#F59E0B' },
+const DEFAULT_EXPENSE_CATEGORIES: Category[] = [
+  { id: 'exp-food', name: 'Food', type: 'expense', color: '#f97316', icon: 'utensils' },
+  { id: 'exp-transport', name: 'Transport', type: 'expense', color: '#3b82f6', icon: 'car' },
   // Add your custom categories here
-  { id: 'custom1', name: 'Subscriptions', type: 'expense', color: '#8B5CF6' },
+  { id: 'exp-subscriptions', name: 'Subscriptions', type: 'expense', color: '#8b5cf6', icon: 'tag' },
 ];
 ```
 
 ### Change Currency Format
 
-Modify the currency formatter in utils:
+The app ships with US Dollar (USD) formatting by default. Modify the currency formatter in utils to use a different currency:
 
 ```typescript
 // src/utils/formatters.ts
-export const formatCurrency = (amount: number): string => {
+export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD', // Change to your currency (EUR, GBP, TRY, etc.)
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(amount);
-};
+}
 ```
 
 ### Customize Theme Colors
@@ -274,6 +278,14 @@ git push origin feature/amazing-feature
 ```
 
 5. **Open a Pull Request**
+
+Before contributing, please read our community documents:
+
+- [Contributing Guide](.github/CONTRIBUTING.md) - Development setup, style guidelines, and branch naming conventions
+- [Code of Conduct](.github/CODE_OF_CONDUCT.md) - Our community standards
+- [Security Policy](.github/SECURITY.md) - How to report vulnerabilities responsibly
+
+When opening an issue or pull request, the repository's [issue templates](.github/ISSUE_TEMPLATE) and [pull request template](.github/PULL_REQUEST_TEMPLATE.md) will guide you through the required details.
 
 ### Commit Message Convention
 

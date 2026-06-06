@@ -11,7 +11,6 @@ import { CategoryPieChart, ExpenseChart } from '../components/charts';
 export default function Dashboard() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   
-  // Zustand store selectors - optimized by Zustand internally
   const transactions = useTransactionStore((state) => state.transactions);
   const getSummary = useTransactionStore((state) => state.getSummary);
   const getRecentTransactions = useTransactionStore((state) => state.getRecentTransactions);
@@ -19,7 +18,6 @@ export default function Dashboard() {
   const getMonthlyChartData = useTransactionStore((state) => state.getMonthlyChartData);
   const deleteTransaction = useTransactionStore((state) => state.deleteTransaction);
 
-  // Computed values from store selectors
   const summary = getSummary();
   const recentTransactions = getRecentTransactions(5);
   const expenseChartData = getCategoryChartData('expense');
@@ -27,21 +25,21 @@ export default function Dashboard() {
 
   const stats = [
     {
-      label: 'Toplam Bakiye',
+      label: 'Total Balance',
       value: formatCurrency(summary.balance),
       icon: Wallet,
       color: summary.balance >= 0 ? 'text-primary-600 dark:text-primary-400' : 'text-danger-600 dark:text-danger-400',
       bgColor: summary.balance >= 0 ? 'bg-primary-100 dark:bg-primary-900/30' : 'bg-danger-100 dark:bg-danger-900/30',
     },
     {
-      label: 'Toplam Gelir',
+      label: 'Total Income',
       value: formatCurrency(summary.totalIncome),
       icon: TrendingUp,
       color: 'text-primary-600 dark:text-primary-400',
       bgColor: 'bg-primary-100 dark:bg-primary-900/30',
     },
     {
-      label: 'Toplam Gider',
+      label: 'Total Expense',
       value: formatCurrency(summary.totalExpense),
       icon: TrendingDown,
       color: 'text-danger-600 dark:text-danger-400',
@@ -56,7 +54,7 @@ export default function Dashboard() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Finansal durumunuza genel bakış
+            An overview of your financial status
           </p>
         </div>
         <Button
@@ -64,7 +62,7 @@ export default function Dashboard() {
           leftIcon={<Plus className="w-4 h-4" />}
           onClick={() => setIsFormOpen(true)}
         >
-          Yeni İşlem
+          New Transaction
         </Button>
       </div>
 
@@ -87,13 +85,13 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Monthly Trend Chart */}
         <Card>
-          <CardHeader title="Aylık Trend" subtitle="Son 6 aylık gelir-gider karşılaştırması" />
+          <CardHeader title="Monthly Trend" subtitle="Income vs expense over the last 6 months" />
           <ExpenseChart data={monthlyChartData} />
         </Card>
 
         {/* Category Distribution Chart */}
         <Card>
-          <CardHeader title="Gider Dağılımı" subtitle="Kategorilere göre harcamalar" />
+          <CardHeader title="Expense Distribution" subtitle="Spending by category" />
           <CategoryPieChart data={expenseChartData} />
         </Card>
       </div>
@@ -101,8 +99,8 @@ export default function Dashboard() {
       {/* Recent Transactions */}
       <Card>
         <CardHeader
-          title="Son İşlemler"
-          subtitle={`${transactions.length} işlem kayıtlı`}
+          title="Recent Transactions"
+          subtitle={`${transactions.length} transactions recorded`}
           action={
             transactions.length > 5 ? (
               <Link to="/transactions">
@@ -111,7 +109,7 @@ export default function Dashboard() {
                   size="sm"
                   rightIcon={<ArrowRight className="w-4 h-4" />}
                 >
-                  Tümünü Gör
+                  View All
                 </Button>
               </Link>
             ) : undefined
@@ -120,7 +118,7 @@ export default function Dashboard() {
         <TransactionList
           transactions={recentTransactions}
           onDelete={deleteTransaction}
-          emptyMessage="Henüz işlem eklenmemiş"
+          emptyMessage="No transactions added yet"
         />
       </Card>
 

@@ -17,13 +17,13 @@ export default function NotFound() {
         
         {/* Title */}
         <h2 className="mt-4 text-2xl font-semibold text-gray-900 dark:text-gray-100">
-          Sayfa Bulunamadı
+          Page Not Found
         </h2>
         
         {/* Description */}
         <p className="mt-2 text-gray-600 dark:text-gray-400 max-w-md mx-auto">
-          Aradığınız sayfa mevcut değil veya taşınmış olabilir. 
-          Ana sayfaya dönerek devam edebilirsiniz.
+          The page you are looking for does not exist or may have been moved.
+          You can return to the home page to continue.
         </p>
         
         {/* Action Buttons */}
@@ -31,7 +31,7 @@ export default function NotFound() {
           <Link to="/">
             <Button variant="primary" className="w-full sm:w-auto">
               <Home className="w-4 h-4 mr-2" aria-hidden="true" />
-              Ana Sayfa
+              Home
             </Button>
           </Link>
           
@@ -41,7 +41,7 @@ export default function NotFound() {
             className="w-full sm:w-auto"
           >
             <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
-            Geri Dön
+            Go Back
           </Button>
         </div>
       </div>

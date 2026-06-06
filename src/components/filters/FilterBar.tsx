@@ -27,16 +27,16 @@ export default function FilterBar({
     filters.searchQuery !== '';
 
   const typeOptions = [
-    { value: 'all', label: 'Tümü' },
-    { value: 'income', label: 'Gelir' },
-    { value: 'expense', label: 'Gider' },
+    { value: 'all', label: 'All' },
+    { value: 'income', label: 'Income' },
+    { value: 'expense', label: 'Expense' },
   ];
 
   const categoryOptions = [
-    { value: '', label: 'Tüm Kategoriler' },
+    { value: '', label: 'All Categories' },
     ...categories.map((cat) => ({
       value: cat.id,
-      label: `${cat.name} (${cat.type === 'income' ? 'Gelir' : 'Gider'})`,
+      label: `${cat.name} (${cat.type === 'income' ? 'Income' : 'Expense'})`,
     })),
   ];
 
@@ -48,7 +48,7 @@ export default function FilterBar({
           <div className="flex-1 min-w-[200px]">
             <Input
               type="text"
-              placeholder="Ara..."
+              placeholder="Search..."
               value={filters.searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               leftIcon={<Search className="w-4 h-4" />}
@@ -73,7 +73,7 @@ export default function FilterBar({
               options={typeOptions}
               value={filters.type}
               onChange={(e) => setType(e.target.value as 'all' | 'income' | 'expense')}
-              placeholder="Tip"
+              placeholder="Type"
             />
           </div>
         )}
@@ -85,7 +85,7 @@ export default function FilterBar({
               options={categoryOptions}
               value={filters.category || ''}
               onChange={(e) => setCategory(e.target.value || null)}
-              placeholder="Kategori"
+              placeholder="Category"
             />
           </div>
         )}
@@ -148,7 +148,7 @@ export default function FilterBar({
             onClick={resetFilters}
             className="text-primary-600 dark:text-primary-400"
           >
-            Filtreleri Temizle
+            Clear Filters
           </Button>
         </div>
       )}
