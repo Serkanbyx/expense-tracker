@@ -24,7 +24,29 @@ A modern, user-friendly income and expense tracking application. Track your fina
 
 ## Live Demo
 
-[🎮 View Live Demo](https://expense-tracker-demo.netlify.app)
+[🎮 View Live Demo](https://expense-trackerrrrrrrr.netlify.app)
+
+## Screenshots
+
+### Dashboard
+
+Interactive analytics with balance summary, monthly trend chart, category distribution, and recent transactions.
+
+![Dashboard - Dark Mode](docs/screenshots/dashboard.png)
+
+![Dashboard - Light Mode](docs/screenshots/dashboard-light.png)
+
+### Transactions
+
+Full transaction list with filters, search, date range, and CSV export.
+
+![Transactions Page](docs/screenshots/transactions.png)
+
+### Add Transaction
+
+Modal form for creating income or expense entries with category and date selection.
+
+![New Transaction Form](docs/screenshots/transaction-form.png)
 
 ## Technologies
 
